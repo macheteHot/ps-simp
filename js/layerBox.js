@@ -25,7 +25,8 @@ function setLayerBox(layers,delFn,endFn) {
     if (i === 0) {
       icon.classList.add('iconlock','curse-not-allowed')
     }else{
-      icon.classList.add('iconicon-delete','hover:c-#f00','cursor-pointer')
+      icon.classList.add('iconicon-delete','hover:c-#f00000','cursor-pointer')
+      icon.setAttribute('id', layer.id)
       icon.addEventListener('click', delFn)
     }
     layerNode.append(previewImg, showName, icon)

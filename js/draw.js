@@ -138,7 +138,7 @@ class Draw {
   }
 
   delLayerByEvent({target}) { 
-    const layerId = target.getAttribute('data-id')
+    const layerId = target.getAttribute('id')
     this.layers = this.layers.filter(layer => layer.id !== layerId)
     setLayerBox(this.layers,this.delLayerByEvent.bind(this),this.sortLayer.bind(this))
     this.reDraw()
