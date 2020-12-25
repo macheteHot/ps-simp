@@ -43,36 +43,24 @@ function rayCasting (p, poly) {
   const px = p.x
   const py = p.y
   let flag = false
-
   for (let i = 0, l = poly.length, j = l - 1; i < l; j = i, i++) {
     const sx = poly[i][0]
     const sy = poly[i][1]
     const tx = poly[j][0]
     const ty = poly[j][1]
-
-    // 点与多边形顶点重合
     if ((sx === px && sy === py) || (tx === px && ty === py)) {
       return false
     }
-
-    // 判断线段两端点是否在射线两侧
     if ((sy < py && ty >= py) || (sy >= py && ty < py)) {
-      // 线段上与射线 Y 坐标相同的点的 X 坐标
       const x = sx + (py - sy) * (tx - sx) / (ty - sy)
-
-      // 点在多边形的边上
       if (x === px) {
         return false
       }
-
-      // 射线穿过多边形的边界
       if (x > px) {
         flag = !flag
       }
     }
   }
-
-  // 射线穿过多边形边界的次数为奇数时点在多边形内
   return flag
 }
 
@@ -143,16 +131,22 @@ class Draw {
     this.reDraw()
   }
 
+  sortLayer ({target}){
+    const idList = [...target.children].map(_=>_.getAttribute('id'))
+    this.layers  = this.layers.sort((a,b)=>idList.indexOf(b.id) - idList.indexOf(a.id))
+    this.reDraw()
+  }
+
   delLayerByEvent({target}) { 
     const layerId = target.getAttribute('data-id')
     this.layers = this.layers.filter(layer => layer.id !== layerId)
-    setLayerBox(this.layers,this.delLayerByEvent.bind(this))
+    setLayerBox(this.layers,this.delLayerByEvent.bind(this),this.sortLayer.bind(this))
     this.reDraw()
   }
 
   addLayerByImg (img) {
     this.layers.push(getLayer(img))
-    setLayerBox(this.layers,this.delLayerByEvent.bind(this))
+    setLayerBox(this.layers,this.delLayerByEvent.bind(this),this.sortLayer.bind(this))
     this.reDraw()
   }
 
