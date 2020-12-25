@@ -11,6 +11,7 @@ export default class FiltUtil {
       reader.readAsDataURL(this.file)
       reader.onloadend = ({ target }) => {
         img.src = target.result
+        img.fileName = this.file.name
       }
       img.onload = () => { resolve(img) }
     })

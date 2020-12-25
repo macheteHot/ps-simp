@@ -6,7 +6,6 @@ import FiltUtil from './file.js'
 import Draw from './draw.js'
 
 const draw = new Draw()
-const canvas = draw.getCanvas()
 class ImgInput {
   constructor () {
     this.inputEle = document.createElement('input')
@@ -89,4 +88,4 @@ function mouseUp () {
 
 draw.addEventListener('mousedown', mouseDown)
 
-export default [addLayerBtn, canvas]
+export default [ addLayerBtn ]

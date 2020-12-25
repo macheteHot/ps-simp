@@ -1,11 +1,14 @@
 
 import Utils from './utils.js'
+import dom from './dom.js';
+import setLayerBox from './layerBox.js';
 
 function getLayer (img, x = 0, y = 0) {
-  const type = img.currentSrc.match(/(?<=data:image\/)\w+(?=;)/)?.[0] ?? 'jpeg'
+  const [all,name,type] = img.fileName.match(/^([\s\S]+)\.([a-zA-Z]+)$/)
   const { width, height } = img
   return {
     id: Utils.GeneratorUuid(),
+    name:name.substr(0,5),
     source: img, // 源
     type, // 类型
     polylinePoints: [
@@ -35,7 +38,7 @@ function getLayerPolylinePointsByOffset (layer, offsetX, offsetY) {
   ]
 }
 
-// 射线判断多边形
+// 射线判断点在多边形内部
 function rayCasting (p, poly) {
   const px = p.x
   const py = p.y
@@ -76,7 +79,7 @@ function rayCasting (p, poly) {
 class Draw {
   constructor () {
     this.defaultImg = null
-    this.canvas = document.createElement('canvas')
+    this.canvas = dom.canvas
     this.canvas.width = 0
     this.canvas.height = 0
     this.ctx = this.canvas.getContext('2d')
@@ -118,7 +121,6 @@ class Draw {
       return null
     }
     if (layer) {
-      layer.polylinePoints = getLayerPolylinePointsByOffset(layer, offsetX, offsetY)
       layer.offsetX = offsetX
       layer.offsetY = offsetY
       this.reDraw()
@@ -131,6 +133,7 @@ class Draw {
   // 移动完成
   moveLayerEndById (layerId) {
     const layer = this.getLayerById(layerId)
+    layer.polylinePoints = getLayerPolylinePointsByOffset(layer, layer.offsetX, layer.offsetY)
     if (layer) {
       layer.x = layer.x + layer.offsetX
       layer.y = layer.y + layer.offsetY
@@ -140,12 +143,16 @@ class Draw {
     this.reDraw()
   }
 
-  getCanvas () {
-    return this.canvas
+  delLayerByEvent({target}) { 
+    const layerId = target.getAttribute('data-id')
+    this.layers = this.layers.filter(layer => layer.id !== layerId)
+    setLayerBox(this.layers,this.delLayerByEvent.bind(this))
+    this.reDraw()
   }
 
   addLayerByImg (img) {
     this.layers.push(getLayer(img))
+    setLayerBox(this.layers,this.delLayerByEvent.bind(this))
     this.reDraw()
   }
 

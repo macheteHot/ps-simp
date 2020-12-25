@@ -1,8 +1,11 @@
 import button from './button.js'
-import app from './dom.js'
+import dom from './dom.js';
+
 
 function main () {
-  app.append(...button)
+  dom.top.append(...button)
 }
 
 main()
+
+new Gcss().start()
